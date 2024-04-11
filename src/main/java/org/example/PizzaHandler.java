@@ -17,7 +17,7 @@ public class PizzaHandler implements HttpHandler {
         pizzas = new ArrayList<>();
         //Inizializzo l'array creando alcune pizze
         pizzas.add(new Pizza("Margherita", Arrays.asList("pomodoro", "mozzarella"), 7));
-        pizzas.add(new Pizza("Margherita senza formaggio", Collections.singletonList("pomodoro"),5));
+        pizzas.add(new Pizza("Pomodoro", Collections.singletonList("pomodoro"),5));
         pizzas.add(new Pizza("Marinara", Arrays.asList("pomodoro", "aglio", "origano"), 8));
         pizzas.add(new Pizza("Capricciosa", Arrays.asList("pomodoro", "mozzarella", "funghi", "prosciutto", "carciofi", "olive"), 8.50));
         pizzas.add(new Pizza("Quattro formaggi", Arrays.asList("pomodoro", "mozzarella", "gorgonzola", "fontina", "parmigiano"), 8));
@@ -54,39 +54,47 @@ public class PizzaHandler implements HttpHandler {
                             break;
                     }
                 } catch (Exception e) {
-                    response = "Error: " + e.getMessage();
+                    response = "Errore: " + e.getMessage();
                     e.printStackTrace();
                 }
                 extracted(exchange, 200, response);
             }
             else {
-                String response = "Il formato del comando non è valido";
+                String response = "Il formato del comando non è valido\n";
                 extracted(exchange, 400, response);
             }
         }
         else {
-            String response = "Manca il parametro 'command'";
+            String response = "Manca il parametro 'command'\n";
             extracted(exchange, 400, response);
         }
     }
 
     private String getPizzasWithIngredient(String ingredient) {
-        List<Pizza> pizzasWithIngredient = pizzas.stream().filter(pizza -> pizza.getIngredients().contains(ingredient))
-                .collect(Collectors.toList());
-
         StringBuilder response = new StringBuilder();
-        for (Pizza pizza : pizzasWithIngredient) {
-            response.append(pizza.getName()).append("\n");
+        List<Pizza> pizzasWithIngredient = new ArrayList<>();
+
+        for (Pizza pizza : pizzas) {
+            if (pizza.getIngredients().contains(ingredient)) {
+                pizzasWithIngredient.add(pizza);
+                response.append(String.format("Pizza: %-20s - Prezzo: €%.2f - Ingredienti: %s\n", pizza.getName(), pizza.getPrice(), pizza.getIngredients()));
+            }
         }
-        return response.toString();
+
+        if (pizzasWithIngredient.isEmpty()) {
+            return "Nessuna pizza contiene l'ingrediente richiesto";
+        } else {
+            return response.toString();
+        }
     }
+
 
     private String getSortedPizzaListByPrice() {
         List<Pizza> sortedPizzas = pizzas.stream().sorted(Comparator.comparing(Pizza::getPrice)).collect(Collectors.toList());
 
         StringBuilder response = new StringBuilder();
         for (Pizza pizza : sortedPizzas) {
-            response.append(String.format("%-20s - €%.1f\n", pizza.getName(), pizza.getPrice()));
+            response.append(String.format("Pizza: %-20s - Prezzo: €%.2f - Ingredienti: %s\n", pizza.getName(), pizza.getPrice(), pizza.getIngredients()));
         }
         return response.toString();
     }
