@@ -2,7 +2,6 @@ package org.example;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -77,12 +76,12 @@ public class PizzaHandler implements HttpHandler {
         for (Pizza pizza : pizzas) {
             if (pizza.getIngredients().contains(ingredient)) {
                 pizzasWithIngredient.add(pizza);
-                response.append(String.format("Pizza: %-20s - Prezzo: €%.2f - Ingredienti: %s\n", pizza.getName(), pizza.getPrice(), pizza.getIngredients()));
+                response.append(String.format("Pizza: %-16s - Prezzo: €%.2f - Ingredienti: %s\n", pizza.getName(), pizza.getPrice(), pizza.getIngredients()));
             }
         }
 
         if (pizzasWithIngredient.isEmpty()) {
-            return "Nessuna pizza contiene l'ingrediente richiesto";
+            return "Nessuna pizza contiene l'ingrediente richiesto\n";
         } else {
             return response.toString();
         }
@@ -94,7 +93,7 @@ public class PizzaHandler implements HttpHandler {
 
         StringBuilder response = new StringBuilder();
         for (Pizza pizza : sortedPizzas) {
-            response.append(String.format("Pizza: %-20s - Prezzo: €%.2f - Ingredienti: %s\n", pizza.getName(), pizza.getPrice(), pizza.getIngredients()));
+            response.append(String.format("Pizza: %-16s - Prezzo: €%.2f - Ingredienti: %s\n", pizza.getName(), pizza.getPrice(), pizza.getIngredients()));
         }
         return response.toString();
     }
